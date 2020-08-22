@@ -10,31 +10,35 @@ import javax.swing.filechooser.FileSystemView;
 public class Parser {
 
 	String defaultPath, defaultName;
+	int fileId = 1;
 	
 
 	public Parser() {
 		JFileChooser fr = new JFileChooser();
 		FileSystemView fw = fr.getFileSystemView();
 		defaultPath = fw.getDefaultDirectory().getAbsolutePath();
-		defaultName = "myMsg.txt";
+		defaultName = "myMsg" + fileId + ".txt";
 	}
 
 	public void write(String msg) throws IOException {
 		System.out.println("Writing by default to: " + defaultPath);
-		File msgFile = new File(defaultPath + "\\"+ defaultName);
-		if (msgFile.exists())
+		FileWriter fw = new FileWriter(createFile());
+		fw.write(msg);
+		fw.flush();
+		fw.close();
+	}
+	
+	public File createFile()
+	{
+		String fileName = defaultName;
+		File msgFile = new File(defaultPath + "\\"+ fileName);
+		while (msgFile.exists())
 		{
-			System.out.println("File already exists");
-			System.exit(0);
+			fileId++;
+			fileName = "myMsg" + fileId + ".txt";
+			msgFile = new File(defaultPath + "\\"+ fileName);
 		}
-		else
-		{
-			FileWriter fw = new FileWriter(msgFile);
-			fw.write(msg);
-			fw.flush();
-			fw.close();
-		}
-		
+		return msgFile;
 	}
 
 }
